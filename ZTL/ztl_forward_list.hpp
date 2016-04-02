@@ -256,11 +256,14 @@ namespace ztl{
 			return static_cast<const_iterator>(nullptr);
 		}
 
-		void swap(forward_list& x){
+		void swap(forward_list& x) noexcept {
 			swap(_node, x._node);
 			swap(_size, x._size);
 		}
 
+		friend void swap(forward_list& a, forward_list& b) noexcept {
+			a.swap(b);
+		}
 		void clear();
 		iterator insert_after(iterator position, const value_type& x);
 		void erase_after(iterator position);

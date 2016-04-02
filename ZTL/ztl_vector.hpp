@@ -141,8 +141,7 @@ namespace ztl{
 			checkcapacity();
 		}
 
-		vector(const vector& _arg):vector(_arg.cbegin(), _arg.cend()){
-		}
+		vector(const vector& _arg):vector(_arg.cbegin(), _arg.cend()){}
 
 		vector(vector&& _right){
 			start = _right.start;
@@ -198,80 +197,44 @@ namespace ztl{
 			_alloc.deallocate(start, (end_of_storage - start));
 		}
 
-		size_type capacity() const {
-			return end_of_storage - start;
-		}
+		size_type				capacity()	const	{ return end_of_storage - start;	}
+		size_type				size()		const	{ return finish - start; }
+		bool					empty()		const	{ return size() == 0; }
+		pointer					data()		const	{ return start; }
+		iterator				begin()				{ return iterator(start); }
+		const_iterator			cbegin()	const	{ return const_iterator(start); }
+		iterator				end()				{ return iterator(finish); }
+		const_iterator			cend()		const	{ return static_cast<const_iterator>(finish); }
+		reverse_iterator		rbegin()			{ return reverse_iterator(iterator(finish - 1)); }
+		const_reverse_iterator	crbegin()	const	{ return const_reverse_iterator(const_iterator(finish - 1)); }
+		reverse_iterator		rend()				{ return reverse_iterator(iterator(start - 1)); }
+		const_reverse_iterator	crend()		const	{ return static_cast<const_reverse_iterator>(const_iterator(start - 1)); }
+		void					clear()				{ erase(begin(), end()); }
+		void					reserve(size_type n){ checkcapacity(n); }
 
-		size_type size() const {
-			return finish - start;
-		}
-
-		bool empty() const { return size() == 0; }
-
-		pointer data() const {
-			return start;
-		}
-
-		iterator begin(){
-			return static_cast<iterator>(start);
-		}
-
-		iterator end(){
-			return static_cast<iterator>(finish);
-		}
-
-		reverse_iterator rbegin() {
-			return static_cast<reverse_iterator>(iterator(finish - 1));
-		}
-
-		reverse_iterator rend() {
-			return static_cast<reverse_iterator>(iterator(start - 1));
-		}
-
-		const_iterator cbegin() const {
-			return static_cast<const_iterator>(start);
-		}
-
-		const_iterator cend() const {
-			return static_cast<const_iterator>(finish);
-		}
-
-		const_reverse_iterator crbegin() const {
-			return static_cast<const_reverse_iterator>(const_iterator(finish - 1));
-		}
-
-		const_reverse_iterator crend() const {
-			return static_cast<const_reverse_iterator>(const_iterator(start - 1));
-		}
-
-		iterator insert(iterator position, const T& value);
+		iterator				insert(iterator position, const T& value);
 
 		template<typename InputIterator>
-		iterator insert(iterator position, InputIterator first, InputIterator last);
+		iterator				insert(iterator position, InputIterator first, InputIterator last);
 
-		iterator insert_n(iterator position, size_type n, const T& value);
+		iterator				insert_n(iterator position, size_type n, const T& value);
 
-		void erase(iterator first, iterator last);
-
-		void clear(){
-			erase(begin(), end());
-		}
-
-		void push_back(const value_type& value);
-		void push_back(value_type&& value);
+		void					erase(iterator first, iterator last);
+		void					push_back(const value_type& value);
+		void					push_back(value_type&& value);
+		
 		template<class... Args>
 		void emplace_back(Args&&...);
 
 		value_type pop_back();
 
-		void reserve(size_type n){ checkcapacity(n); }
 
 		void swap(vector& rit){
 			ztl::swap(start, rit.start);
 			ztl::swap(finish, rit.finish);
 			ztl::swap(end_of_storage, rit.end_of_storage);
-
 		}
+		friend void swap(vector& a, vector& b) noexcept { a.swap(b); }
 
 		void resize(size_type new_size){
 			if (new_size < size())
@@ -280,19 +243,9 @@ namespace ztl{
 				insert_n(end(), new_size - size(), value_type());
 		}
 
-		reference operator[](size_type n){
-			return start[n];
-		}
+		reference operator[](size_type n){ return start[n];	}
 
-		const_reference operator[](size_type n) const {
-			return start[n];
-		}
-
-		friend void swap(vector& a, vector& b) noexcept {
-			swap(a.start, b.start);
-			swap(a.finish, b.finish);
-			swap(a.end_of_storage, b.end_of_storage);
-		}
+		const_reference operator[](size_type n) const {	return start[n]; }
 
 		friend bool operator==(const vector& v1, const vector& v2) {
 			bool ret = v1.size() == v2.size();
@@ -318,7 +271,6 @@ namespace ztl{
 				shrink();
 		}
 
-
 	private:
 		pointer start;
 		pointer finish;
@@ -329,7 +281,6 @@ namespace ztl{
 		iterator end_of_storage_it() { return static_cast<iterator>(end_of_storage); }
 
 	};
-
 
 	template<typename T, template<typename> class Alloc>
 	void vector<T, Alloc>::push_back(const T& value){
@@ -372,7 +323,6 @@ namespace ztl{
 		size_type dis = distance(start_it(), position);
 		checkcapacity();
 		position = start_it() + dis;
-		//memmove(position + 1, position, (finish - position)*sizeof(T));
 		copy(position, finish_it(), position + 1);
 		new(&*position)T(value);
 		++finish;

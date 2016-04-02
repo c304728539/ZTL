@@ -1,23 +1,21 @@
 
 
 #include<iostream>
-#include"ztl_largenum.hpp"
+#include"ztl_splay_tree.hpp"
 using std::cout;
 using std::endl;
 using namespace ztl;
 
 int main(int argc, char *argv[], char *env[])
 {
-	LargeFloat a("-11111111111123123.34");
-	LargeFloat b(1111.1f);
-	cout << a <<endl;
-	cout << b << endl;
 
-	cout << a+(b) << endl;
-	//cout << a-(b) << endl;
-	//cout << a*(b) << endl;
-	//cout << a/(b) << endl;
+	splay_tree<int> st;
+	st.insert(1);
+	cout << *st.begin();
+	st.erase(st.begin());
+	if (st.empty())
+		cout << "!!!";
 	//cout << a%(b) << endl;
-
+	
 	return 0;
 }

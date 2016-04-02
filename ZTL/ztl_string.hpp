@@ -297,6 +297,7 @@ namespace ztl{
 		template<typename T>
 		friend std::ostream& operator<<(std::ostream& os, basic_string<T>& str){return os<<str._p_str;}
 
+	public:
 		static const size_t npos = -1;
 	};
 

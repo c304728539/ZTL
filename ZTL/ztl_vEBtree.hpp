@@ -137,23 +137,17 @@ namespace ztl{
 		}
 
 		~__vEBtree_node(){
-			
 		}
 
-		value_type minimum(){
-			return _min;
-		}
+		value_type minimum() { return _min; }
 
-		value_type maximum(){
-			return _max;
-		}
+		value_type maximum() { return _max; }
 		
 		void insert_base(const value_type& x){
 			_min = x;
 			_max = x;
 		}
 		
-
 		bool member(const value_type& x){
 			if (empty()) return false;
 			if (x == _min || x == _max)
@@ -270,7 +264,6 @@ namespace ztl{
 		value_type _min, _max;
 		
 	private:		
-
 
 		bool empty(){ return _min == nil; }
 

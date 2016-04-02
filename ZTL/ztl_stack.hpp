@@ -8,14 +8,12 @@ namespace ztl{
 
 	template<typename T,typename Container = vector<T>>
 	class stack{
-		typedef T value_type;
-		typedef value_type& reference;
-		typedef value_type* pointer;
-		typedef const value_type& const_reference;
-		typedef const value_type* const_pointer;
-		typedef size_t size_type;
-
-		
+		using value_type = T;
+		using reference = value_type&;
+		using pointer = value_type*;
+		using const_reference = const value_type&;
+		using const_pointer = const value_type*;
+		using size_type = size_t;
 
 	private:
 		Container _imp;

@@ -222,7 +222,7 @@ namespace ztl {
 		}
 
 		friend int numcmp(const LargeNumUnsigned& n1, const LargeNumUnsigned& n2) {
-			return 0 == CompareData(n1.data, n2.data);
+			return CompareData(n1.data, n2.data);
 		}
 
 	private:
@@ -343,10 +343,11 @@ namespace ztl {
 
 		static pair<dataType, dataType> DataDivide(const dataType& dividend, const dataType& divisor) {
 			dataType divisor_c(divisor);
+			trim(divisor_c);
+			int len = dividend.size() - divisor_c.size();
 			dataType remainder(dividend);
 			dataType result;
 			divisor_c.resize(remainder.size());
-			int len = dividend.size() - divisor.size();
 			for (int i = 0; i <= len; ++i)
 			{
 				short begin = 0, end = 10, mid = 5;
@@ -553,7 +554,7 @@ namespace ztl {
 			while (decimal && 0 == DataR()[data.lenght() - 1])
 				DataR().pop_back(), --decimal;
 			auto it = DataR().begin();
-			while (DataR().size() > decimal && 0 == *it)
+			while (distance(it ,DataR().end()) > static_cast<int>(decimal + 1) && 0 == *it)
 				++it;
 			DataR().erase(DataR().begin(), it);
 		}
@@ -561,7 +562,8 @@ namespace ztl {
 		void _construst(const string& str){
 			string str_c(str);
 			auto pos = str_c.find('.');
-			decimal = str_c.size() - pos - 1;
+			if(string::npos!=pos)
+				decimal = str_c.size() - pos - 1;
 			str_c.erase(pos, 1);
 			data._construct(str_c);
 		}
@@ -572,7 +574,6 @@ namespace ztl {
 
 		LargeFloat(const string& str) {
 			_construst(str);
-			
 		}
 
 		LargeFloat(float num) {
@@ -591,14 +592,14 @@ namespace ztl {
 			{
 				do
 				{
-					this->data * 10;
+					this->data *= 10;
 				} while (++this->decimal != num_c.decimal);
 			}
 			else if (this->decimal > num_c.decimal)
 			{
 				do
 				{
-					num_c.data * 10;
+					num_c.data *= 10;
 				} while (this->decimal != ++num_c.decimal);
 			}
 			this->data += num_c.data;
@@ -607,20 +608,24 @@ namespace ztl {
 		}
 
 		virtual LargeFloat& operator-=(const LargeFloat& num) override {
-			LargeNum opp_num = ztl::opposite(num.data);
-			data += ztl::opposite(num.data);
-			return *this;
+			LargeFloat opp_num = ztl::opposite(num);
+			return *this += opp_num;
 		}
 
 		virtual LargeFloat& operator*=(const LargeFloat& num) override {
-			LargeNum opp_num = ztl::opposite(num.data);
-			data += ztl::opposite(num.data);
+			data *= num.data;
+			decimal += num.decimal;
+			trim();
 			return *this;
 		}
 
 		virtual LargeFloat& operator/=(const LargeFloat& num) override {
-			LargeNum opp_num = ztl::opposite(num.data);
-			data += ztl::opposite(num.data);
+			data /= num.data;
+			if (num.decimal > this->decimal)
+				DataR().insert_n(DataR().end(), num.decimal - this->decimal, 0), this->decimal = 0;
+			else
+				this->decimal -= num.decimal;
+			trim();
 			return *this;
 		}
 		
@@ -628,12 +633,16 @@ namespace ztl {
 		{
 			numf.printsign(os);
 			size_t n = numf.DataR().size();
+			if (numf.decimal == n)
+				os << '0';
 			for (auto it = numf.DataR().cbegin(); it != numf.DataR().cend(); ++it)
 			{
-				os << *it;
-				if (numf.decimal == --n)
+				if (numf.decimal == n--)
 					os << '.';
+				os << *it;
 			}
+			if (numf.decimal == 0)
+				os << ".0";
 			return os;
 		}
 	};
