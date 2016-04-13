@@ -22,19 +22,19 @@ namespace ztl{
 		friend class fibonacci_heap;
 
 
-		typedef list<__fibonacci_heap_node<T>*> node_list;
-		typedef node_list* list_pointer;
-		typedef typename node_list::iterator list_iterator;
-		typedef __fibonacci_heap_iterator iterator;
-		typedef __fibonacci_heap_iterator self;
+		using node_list = list<__fibonacci_heap_node<T>*>;
+		using list_pointer = node_list*;
+		using list_iterator = typename node_list::iterator;
+		using iterator = __fibonacci_heap_iterator;
+		using self = __fibonacci_heap_iterator;
 
-		typedef forward_iterator_tag iterator_category;
+		using iterator_category = forward_iterator_tag;
 
-		typedef T value_type;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef value_type* pointer;
-		typedef const value_type* const_pointer;
+		using value_type = T ;
+		using reference = value_type&;
+		using const_reference = const value_type&;
+		using pointer = value_type*;
+		using const_pointer = const value_type*;
 	private:
 		list_iterator list_it;
 		list_pointer plist;
@@ -100,9 +100,9 @@ namespace ztl{
 	template<typename T>
 	struct __fibonacci_heap_node{
 
-		typedef list<__fibonacci_heap_node*> node_list;
-		typedef node_list* list_pointer;
-		typedef __fibonacci_heap_iterator<T> iterator;
+		using node_list = list<__fibonacci_heap_node*>;
+		using list_pointer = node_list*;
+		using iterator = __fibonacci_heap_iterator<T>;
 
 		T element;
 		bool mark = false;
@@ -115,17 +115,17 @@ namespace ztl{
 	template<typename T, typename Key = T, typename ExtractKey = identity<Key>, typename Compare = ztl::less<Key>, template<typename> class Alloc = Allocator>
 	class fibonacci_heap{
 	public:
-		typedef Key key_type;
-		typedef T value_type;
-		typedef __fibonacci_heap_node<value_type> node_type;
-		typedef node_type* node_pointer;
-		typedef size_t size_type;
-		typedef list<node_pointer,Alloc> node_list;
-		typedef node_list* list_pointer;
-		typedef __fibonacci_heap_iterator<T> iterator;
-		typedef const iterator const_iterator;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
+		using key_type = Key;
+		using value_type = T;
+		using node_type = __fibonacci_heap_node<value_type>;
+		using node_pointer = node_type*;
+		using size_type = size_t;
+		using node_list = list<node_pointer,Alloc>;
+		using list_pointer = node_list*;
+		using iterator = __fibonacci_heap_iterator<T>;
+		using const_iterator = const iterator;
+		using reference = value_type&;
+		using const_reference = const value_type&;
 
 	private:
 		ExtractKey key_geter;
@@ -139,7 +139,6 @@ namespace ztl{
 
 		static const float FIBO;
 	private:
-
 
 		node_pointer new_node(const value_type& x){
 			node_pointer ret = _alloc_node.allocate(1);

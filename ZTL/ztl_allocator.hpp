@@ -14,7 +14,7 @@ namespace ztl{
 #define _VOLATILE volatile
 
 	class malloc_alloc{
-		typedef void(*malloc_handler_func)();
+		using malloc_handler_func = void(*)();
 	private:
 		static void* e_malloc(size_t n);
 		static void* e_realloc(void* p, size_t n);
@@ -179,7 +179,7 @@ namespace ztl{
 	template<bool _thread, int _nint>
 	inline void* alloc<_thread, _nint>::allocate(size_t n)
 	{
-		typedef typename IfThenElse<_thread, __true_type, __false_type>::Result R;
+		using R = typename IfThenElse<_thread, __true_type, __false_type>::Result;
 		return _allocate_aux(n, R());
 	}
 
@@ -208,7 +208,7 @@ namespace ztl{
 
 	template<bool _thread, int _nint>
 	void alloc<_thread, _nint>::deallocate(void* p, size_t n){
-		typedef typename IfThenElse<_thread, __true_type, __false_type>::Result R;
+		using R = typename IfThenElse<_thread, __true_type, __false_type>::Result;
 		_deallocate_aux(p, n, R());
 	}
 	template<bool _thread, int _nint>
@@ -340,7 +340,7 @@ namespace ztl{
 			Chunk(const Chunk&) = delete;
 
 			void* alloc(size_t _nbyte, size_t& nblock) {
-				typedef typename IfThenElse<thread, __true_type, __false_type>::Result R;
+				using R = typename IfThenElse<thread, __true_type, __false_type>::Result;
 				return _alloc_aux(_nbyte, nblock, R());
 			}
 
@@ -395,12 +395,12 @@ namespace ztl{
 			friend class Chunk;
 		public:
 			void* allocate() {
-				typedef typename IfThenElse<thread, __true_type, __false_type>::Result R;
+				using R = typename IfThenElse<thread, __true_type, __false_type>::Result;
 				return _allocate_aux(R());
 			}
 
 			void deallocate(void* p) {
-				typedef typename IfThenElse<thread, __true_type, __false_type>::Result R;
+				using R = typename IfThenElse<thread, __true_type, __false_type>::Result;
 				_deallocate_aux(p, R());
 			}
 
@@ -556,20 +556,20 @@ namespace ztl{
 
 	template<bool thread, typename T, template<bool,int> class alloc_which>
 	class __Allocator_aux{
-		typedef alloc_which<thread, 0> default_alloc;
+		using default_alloc = alloc_which<thread, 0>;
 	public:
-		typedef T value_type;
-		typedef size_t size_type;
-		typedef value_type *pointer;
-		typedef const value_type *const_pointer;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef ptrdiff_t difference_type;
+		using value_type = T;
+		using size_type = size_t;
+		using pointer = value_type *;
+		using const_pointer = const value_type *;
+		using reference = value_type&;
+		using const_reference = const value_type&;
+		using difference_type = ptrdiff_t;
 
 		template<class _Other>
 		struct rebind
 		{	
-			typedef __Allocator_aux<thread,_Other, alloc_which> other;
+			using other = __Allocator_aux<thread,_Other, alloc_which>;
 		};
 
 	public:

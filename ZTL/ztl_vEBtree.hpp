@@ -256,11 +256,9 @@ namespace ztl{
 
 		enum { sqrt_u = 0 };
 		enum {nil = MAX_SIZE_T};
-		typedef size_t value_type;
-		typedef value_type* pointer;
-		//typedef __vEBtree_node<sqrt_u, Alloc> sqrt_vBE_node;
-		//typedef sqrt_vBE_node* sqrt_vBE_node_pointer;
-
+		using value_type = size_t;
+		using pointer = value_type*;
+		
 		value_type _min, _max;
 		
 	private:		
@@ -341,16 +339,16 @@ namespace ztl{
 
 		//enum { sqrt_u = Sqrt<u>::result };
 	public:
-		typedef size_t value_type;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef value_type* pointer;
-		typedef const value_type* const_pointer;
+		using value_type = size_t;
+		using reference = value_type&;
+		using const_reference = const value_type&;
+		using pointer = value_type*;
+		using const_pointer = const value_type*;
 
-		typedef __vEBtree_node<u, Alloc> node_type;
-		typedef node_type* node_pointer;
+		using node_type = __vEBtree_node<u, Alloc>;
+		using node_pointer = node_type*;
 
-		typedef __vEBtree_iterator<u,Alloc> iterator;
+		using iterator = __vEBtree_iterator<u,Alloc>;
 
 	private:
 		Alloc<value_type> _alloc;

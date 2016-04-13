@@ -21,13 +21,13 @@ namespace ztl{
 
 	template<typename InputIterator,typename OutputIterator>
 	inline OutputIterator uninitialized_copy(InputIterator first, InputIterator last, OutputIterator destination){
-		typedef typename TypeCheck<InputIterator>::BaseT _typecheck;
-		typedef typename IfThenElse<
+		using _typecheck = typename TypeCheck<InputIterator>::BaseT;
+		using R = typename IfThenElse<
 			TypeCheck<_typecheck>::IsPtr ||
 			IsFundaType<_typecheck>::Yes,
 			__true_type,
 			__false_type
-		>::Result R;
+		>::Result;
 		return _uninitialized_copy_aux(first, last, destination, R());
 	}
 
@@ -49,13 +49,13 @@ namespace ztl{
 
 	template<typename OutputIterator,typename T>
 	inline OutputIterator uninitialized_fill(OutputIterator first, OutputIterator last, const T& value){
-		typedef typename TypeCheck<OutputIterator>::BaseT _typecheck;
-		typedef typename IfThenElse<
+		using _typecheck = typename TypeCheck<OutputIterator>::BaseT;
+		using R = typename IfThenElse<
 			TypeCheck<_typecheck>::IsPtr ||
 			IsFundaType<_typecheck>::Yes,
 			__true_type,
 			__false_type
-		>::Result R;
+		>::Result;
 		return _uninitialized_fill_aux(first, last, value, R());
 	}
 
@@ -77,13 +77,13 @@ namespace ztl{
 
 	template<typename OutputIterator, typename Size, typename T>
 	inline OutputIterator uninitialized_fill_n(OutputIterator first, Size n, const T& value){
-		typedef typename TypeCheck<OutputIterator>::BaseT _typecheck;
-		typedef typename IfThenElse<
+		using _typecheck = typename TypeCheck<OutputIterator>::BaseT;
+		using R = typename IfThenElse<
 			TypeCheck<_typecheck>::IsPtr ||
 			IsFundaType<_typecheck>::Yes,
 			__true_type,
 			__false_type
-		>::Result R;
+		>::Result;
 		return _uninitialized_fill_n_aux(first, n, value, R());
 	}
 }

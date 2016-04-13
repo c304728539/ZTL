@@ -38,13 +38,13 @@ namespace ztl{
 
 	template<typename InputIterator>
 	inline void destory(InputIterator first, InputIterator last){
-		typedef typename TypeCheck<InputIterator>::BaseT _typecheck;
-		typedef typename IfThenElse<
+		using _typecheck = typename TypeCheck<InputIterator>::BaseT;
+		using R = typename IfThenElse<
 			TypeCheck<_typecheck>::IsPtr || 
 			IsFundaType<_typecheck>::Yes,
 				__true_type, 
 				__false_type
-			>::Result R;
+			>::Result;
 		_destory_aux(first, last, R());
 	}
 	

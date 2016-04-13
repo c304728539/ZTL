@@ -15,13 +15,13 @@ namespace ztl{
 	template<typename T1, typename T2>
 	class IfThenElse<true, T1, T2>{
 	public:
-		typedef T1 Result;
+		using Result = T1;
 	};
 	 
 	template<typename T1, typename T2>
 	class IfThenElse<false, T1, T2>{
 	public:
-		typedef T2 Result;
+		using Result = T2;
 	};
 
 	struct __true_type{
@@ -36,8 +36,8 @@ namespace ztl{
 	template<typename T>
 	class IsFunction{
 	private:
-		typedef char one;
-		typedef struct{ char a[2]; } two;
+		using one = char ;
+		using two = struct{ char a[2]; } ;
 		template<typename U> static one test(...);
 		template<typename U> static two test(U(*)[1]);
 	public:
@@ -55,9 +55,9 @@ namespace ztl{
 			IsFunc = IsFunction<T>::Yes,
 			IsPtemem = 0
 		};
-		typedef T BaseT;
-		typedef T BottomT;
-		typedef void ClassT;
+		using BaseT = T;
+		using BottomT = T;
+		using ClassT = void;
 	};
 
 	template<typename T>
@@ -70,9 +70,9 @@ namespace ztl{
 			IsFunc = 0,
 			IsPtemem = 0
 		};
-		typedef T BaseT;
-		typedef typename TypeCheck<T>::BottomT BottomT;
-		typedef void ClassT;
+		using BaseT = T;
+		using BottomT = typename TypeCheck<T>::BottomT;
+		using ClassT = void;
 	};
 
 	template<typename T>
@@ -85,9 +85,9 @@ namespace ztl{
 			IsFunc = 0,
 			IsPtemem = 0
 		};
-		typedef T BaseT;
-		typedef typename TypeCheck<T>::BottomT BottomT;
-		typedef void ClassT;
+		using BaseT = T;
+		using BottomT = typename TypeCheck<T>::BottomT;
+		using ClassT = void;
 	};
 
 	template<typename T,int N>
@@ -100,9 +100,9 @@ namespace ztl{
 			IsFunc = 0,
 			IsPtemem = 0
 		};
-		typedef T BaseT;
-		typedef typename TypeCheck<T>::BottomT BottomT;
-		typedef void ClassT;
+		using BaseT = T;
+		using BottomT = typename TypeCheck<T>::BottomT;
+		using ClassT = void;
 	};
 
 	template<typename T>
@@ -115,9 +115,9 @@ namespace ztl{
 			IsFunc = 0,
 			IsPtemem = 0
 		};
-		typedef T BaseT;
-		typedef typename TypeCheck<T>::Bottom BottomT;
-		typedef void ClassT;
+		using BaseT = T;
+		using BottomT = typename TypeCheck<T>::BottomT;
+		using ClassT = void;
 	};
 
 	template<typename T,typename C>
@@ -130,9 +130,9 @@ namespace ztl{
 			IsFunc = 0,
 			IsPtemem = 1
 		};
-		typedef T BaseT;
-		typedef typename TypeCheck<T>::Bottom BottomT;
-		typedef C ClassT;
+		using BaseT = T;
+		using BottomT = typename TypeCheck<T>::BottomT;
+		using ClassT = C;
 	};
 
 	template<typename T>
@@ -185,19 +185,19 @@ namespace ztl{
 	template<class T>
 	struct remove_reference
 	{
-		typedef T type;
+		using type = T;
 	};
 
 	template<class T>
 	struct remove_reference<T&>
 	{	
-		typedef T type;
+		using type = T;
 	};
 
 	template<class T>
 	struct remove_reference<T&&>
 	{	
-		typedef T type;
+		using type = T;
 	};
 
 	template<class T> inline
@@ -221,9 +221,9 @@ namespace ztl{
 	template<typename T1,typename T2>
 	struct pair
 	{	// copy from <utility>
-		typedef pair<T1, T2> self;
-		typedef T1 first_type;
-		typedef T2 second_type;
+		using self = pair<T1, T2>;
+		using first_type = T1;
+		using second_type = T2;
 
 		first_type first;
 		second_type second;

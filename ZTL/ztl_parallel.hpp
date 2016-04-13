@@ -5,6 +5,10 @@
 #include"ztl_algorithm.hpp"
 
 namespace ztl {
+
+
+
+
 	/*
 	template<typename InputIterator>
 	parallel_merge_sort(InputIterator first, InputIterator last) {

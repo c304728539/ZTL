@@ -14,7 +14,7 @@ namespace ztl{
 	template<typename T>
 	class __RBtree_node:public __tree_base_node<T,__RBtree_node<T>>{
 	public:
-		typedef typename __tree_base_node<T, __RBtree_node<T>>::value_type value_type;
+		using value_type = typename __tree_base_node<T, __RBtree_node<T>>::value_type;
 		node_color _color;
 	};
 
@@ -27,7 +27,7 @@ namespace ztl{
 	template<typename Key, typename Value = Key, typename KeyOfValue = ztl::identity<Key>, typename Compare = ztl::less<Key>, typename Equal = equal<Key>, template<typename> class _Alloc = Allocator>
 	class RBtree : public __tree_base<Key, Value, KeyOfValue, Compare, Equal, _Alloc, __RBtree_iterator, __RBtree_const_iterator, __RBtree_node>{
 	public:
-		typedef __tree_base<Key, Value, KeyOfValue, Compare, Equal, _Alloc, __RBtree_iterator, __RBtree_const_iterator, __RBtree_node> base;
+		using base = __tree_base<Key, Value, KeyOfValue, Compare, Equal, _Alloc, __RBtree_iterator, __RBtree_const_iterator, __RBtree_node>;
 		using value_type = Value;
 		using base::const_pointer;
 		using base::const_reference;

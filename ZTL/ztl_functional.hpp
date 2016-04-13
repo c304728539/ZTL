@@ -198,6 +198,104 @@ namespace ztl {
 		}
 	};
 
+	namespace placeholder {
+		template<size_t n>
+		struct _PH{
+			static const size_t value = n;
+		};
+
+		_PH<0> _1;
+		_PH<1> _2;
+		_PH<2> _3;
+		_PH<3> _4;
+	}
+
+
+	template<typename... F>
+	struct GetReturnType;
+
+	template<typename _RT, typename... Args>
+	struct GetReturnType<_RT(*)(Args...)> {
+		using ReturnType = _RT;
+	};
+
+	template<typename T>
+	struct IsPlaceHolder {
+		using Result = __false_type;
+	};
+
+
+	template<size_t n>
+	struct IsPlaceHolder<placeholder::_PH<n>> {
+		using Result = __true_type;
+	};
+
+	template<typename P>
+	struct ExtractPlaceHolder {
+		template<typename tupleT>
+		P& Extract(P& p, tupleT& t) {
+			return p;
+		}
+	};
+
+	template<size_t n>
+	struct ExtractPlaceHolder<placeholder::_PH<n>> {
+		template<typename tupleT>
+		typename tuple_element<n, tupleT>::type& Extract(placeholder::_PH<n>&, tupleT& t) {
+			return get<n>(t);
+		}
+	};
+
+	template<typename F, typename... ArgsR>
+	class functionbind;
+
+	template<typename F, typename Arg, typename... ArgsR>
+	class functionbind<F,Arg, ArgsR...>: public functionbind<F,ArgsR...>{
+		Arg argbind;
+		using _RT = typename GetReturnType<F>::ReturnType;
+	public:
+		functionbind(F f, Arg arg, ArgsR... argsr):functionbind<F, ArgsR...>(f, argsr...),argbind(arg){
+			
+		}
+
+		template<typename... Args>
+		_RT	operator()(Args... tupleargs) {
+			tuple<Args...> t(tupleargs...);
+			return functionbind<F, ArgsR...>::call(t, ExtractPlaceHolder<typename remove_reference<Arg>::type>().Extract(argbind, t));
+		}
+	protected:
+		template<typename tupleT, typename... ArgsP>
+		_RT	call(tupleT& t, ArgsP... args) {
+			return functionbind<F, ArgsR...>::call(t, args..., ExtractPlaceHolder<typename remove_reference<Arg>::type>().Extract(argbind, t));
+		}
+	};
+
+	template<typename F>
+	class functionbind<F>{
+		F pF;
+		using _RT = typename GetReturnType<F>::ReturnType;
+	public:
+		functionbind(F f) :pF(f) {}
+
+		template<typename... ArgsP>
+		_RT	operator()(ArgsP... args) {
+			return pF(args...);
+		}
+
+		template<typename tupleT, typename... ArgsP>
+		_RT	call(tupleT&, ArgsP... args) {
+			return pF(args...);
+		}
+	};
+
+	template<typename F, typename... Args >
+	functionbind<F, Args...> bind(F f, Args&&... args) {
+		return functionbind<F, Args...>(f, args...);
+	}
+
+	//template< class R, class F, class... Args >
+	//functionbind bind(F&& f, Args&&... args);
+
 }
 
 #endif	//ZTL_FUNCTION_HPP

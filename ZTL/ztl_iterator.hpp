@@ -14,11 +14,11 @@ namespace ztl{
 	template <class _Category, class _Tp, class _Distance = ptrdiff_t,
 	class _Pointer = _Tp*, class _Reference = _Tp&>
 	struct iterator {
-		typedef _Category  iterator_category;
-		typedef _Tp        value_type;
-		typedef _Distance  difference_type;
-		typedef _Pointer   pointer;
-		typedef _Reference reference;
+		using iterator_category		=	_Category;
+		using value_type			=	_Tp;
+		using difference_type		=	_Distance;
+		using pointer				=	_Pointer;
+		using reference				=	_Reference;
 	};
 
 
@@ -26,11 +26,11 @@ namespace ztl{
 
 	template <typename _Iterator>
 	struct iterator_traits {
-		typedef typename _Iterator::iterator_category  iterator_category;			
-		typedef typename _Iterator::value_type        value_type;
-		typedef typename _Iterator::difference_type   difference_type;
-		typedef typename _Iterator::pointer           pointer;
-		typedef typename _Iterator::reference         reference;
+		using iterator_category		=	typename _Iterator::iterator_category; 
+		using value_type			=	typename _Iterator::value_type;
+		using difference_type		=	typename _Iterator::difference_type;
+		using pointer				=	typename _Iterator::pointer;
+		using reference				=	typename _Iterator::reference;
 	};
 
 
@@ -39,50 +39,50 @@ namespace ztl{
 #ifdef _VECTOR_
 	template <typename value_T>
 	struct iterator_traits <std::_Vector_iterator<std::_Vector_val<std::_Simple_types<value_T>>>> {
-		typedef random_access_iterator_tag iterator_category;
-		typedef typename std::_Vector_iterator<std::_Vector_val<std::_Simple_types<value_T>>>::value_type    value_type;
-		typedef ptrdiff_t							difference_type;
-		typedef value_type*							pointer;
-		typedef value_type&							reference;
+		using iterator_category		=	random_access_iterator_tag;
+		using value_type			=	typename std::_Vector_iterator<std::_Vector_val<std::_Simple_types<value_T>>>::value_type;
+		using difference_type		=	ptrdiff_t;
+		using pointer				=	value_type*;
+		using reference				=	value_type&;
 	};
 #endif
 
 #ifdef _LIST_
 	template <typename value_T>
 	struct iterator_traits <std::_List_iterator<std::_List_val<std::_List_simple_types<value_T>>>> {
-		typedef bidirectional_iterator_tag iterator_category;
-		typedef typename std::_List_iterator<std::_List_val<std::_List_simple_types<value_T>>>::value_type    value_type;
-		typedef ptrdiff_t							difference_type;
-		typedef value_type*							pointer;
-		typedef value_type&							reference;
+		using iterator_category		=	bidirectional_iterator_tag;
+		using value_type			=	typename std::_List_iterator<std::_List_val<std::_List_simple_types<value_T>>>::value_type;
+		using difference_type		=	ptrdiff_t;
+		using pointer				=	value_type*;
+		using reference				=	value_type&;
 	};
 #endif
 
 
 	template <typename _Tp>
 	struct iterator_traits<_Tp*> {
-		typedef random_access_iterator_tag iterator_category;
-		typedef _Tp                         value_type;
-		typedef ptrdiff_t                   difference_type;
-		typedef _Tp*                        pointer;
-		typedef _Tp&                        reference;
+		using iterator_category		=	random_access_iterator_tag ;
+		using value_type			=	_Tp;
+		using difference_type		=	ptrdiff_t;
+		using pointer				=	_Tp*;
+		using reference				=	_Tp&;
 	};
 
 	template <typename _Tp>
 	struct iterator_traits<const _Tp*> {
-		typedef random_access_iterator_tag iterator_category;
-		typedef _Tp                         value_type;
-		typedef ptrdiff_t                   difference_type;
-		typedef const _Tp*                  pointer;
-		typedef const _Tp&                  reference;
+		using iterator_category		=	random_access_iterator_tag ;
+		using value_type			=	_Tp;
+		using difference_type		=	ptrdiff_t;
+		using pointer				=	const _Tp*;
+		using reference				=	const _Tp&;
 	};
 
 	template <class _Iter>
 	inline typename iterator_traits<_Iter>::iterator_category
 		_iterator_category(const _Iter&)
 	{
-			typedef typename iterator_traits<_Iter>::iterator_category category;
-			return category();
+		using category = typename iterator_traits<_Iter>::iterator_category;
+		return category();
 	}
 
 
@@ -108,8 +108,7 @@ namespace ztl{
 	template <class _InputIterator>
 	inline typename iterator_traits<_InputIterator>::difference_type
 		distance(_InputIterator _first, _InputIterator _last) {
-			typedef typename iterator_traits<_InputIterator>::iterator_category
-				category;
+			using category = typename iterator_traits<_InputIterator>::iterator_category;
 			return ztl::_distance(_first, _last, category());
 		}
 
@@ -311,12 +310,12 @@ namespace ztl{
 	class _reverse_iterator
 	{
 	public:
-		typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
-		typedef typename iterator_traits<Iterator>::difference_type difference_type;
-		typedef typename iterator_traits<Iterator>::value_type value_type;
-		typedef typename iterator_traits<Iterator>::reference reference;
-		typedef typename iterator_traits<Iterator>::pointer pointer;
-		typedef _reverse_iterator self;
+		using iterator_category = typename iterator_traits<Iterator>::iterator_category ;
+		using difference_type = typename iterator_traits<Iterator>::difference_type;
+		using value_type = typename iterator_traits<Iterator>::value_type;
+		using reference = typename iterator_traits<Iterator>::reference;
+		using pointer = typename iterator_traits<Iterator>::pointer;
+		using self = _reverse_iterator;
 
 	public:
 		explicit _reverse_iterator(const Iterator& it) :_it(it){}

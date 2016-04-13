@@ -7,7 +7,10 @@
 #endif
 #ifdef WIN32
 #include<Windows.h>
+#include"ztl_vector.hpp"
 #endif
+
+#include<thread>
 
 namespace ztl {
 	//for Window
@@ -111,21 +114,39 @@ namespace ztl {
 
 	#define synchronized(M)  for(Lock M##_lock = M; M##_lock; M##_lock.setUnlock())
 
-	/*class thread {
-
+	/*
+	class paralleljob {
+	private:
+		vector<std::thread&> threads;
+		vector<std::thread&> waitthreads;
+		size_t index = 0;
 	public:
-		thread() noexcept;
-		template <class Fn, class... Args>
-		explicit thread(Fn&& fn, Args&&... args) {
-			DWORD tid;
-			//CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)fn, &args...,0,&tid)
+		void SetWaits(const vector<std::thread&>& waits) { waitthreads = waits; }
+		void SetThreads(const vector<std::thread&>& threads) { this->threads = threads; }
+		void wait() { 
+			for (auto& th : waitthreads)
+				th.join(); 
 		}
 
-		thread(const thread&) = delete;
-		thread(thread&& x) noexcept;
+		std::thread& getone() { 
+			return threads[index++];
+		}
 
 
-	};*/
+
+	};
+	
+	class threadmanage {
+	private:
+		unsigned int maxNumParallel;  
+		unsigned int waitNum;
+		unsigned int runningNum;
+	public:
+		threadmanage();
+
+
+	};
+	*/
 }
 
 #endif

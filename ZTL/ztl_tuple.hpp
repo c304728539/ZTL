@@ -8,7 +8,8 @@ namespace ztl{
 	class tuple;
 
 	template<>
-	class tuple<>{		
+	class tuple<>{
+	public:
 		using type = void;
 	public:
 		void swap(tuple<>){}
@@ -25,9 +26,9 @@ namespace ztl{
 	class tuple<_This, _Other...> :public tuple < _Other... >
 	{
 	public:
-		typedef  tuple<_Other...> base;
-		typedef _This type;
-		typedef tuple<_This, _Other...> self;
+		using base = tuple<_Other...>;
+		using type = _This;
+		using self = tuple<_This, _Other...>;
 	private:
 		_This x;
 	public:
@@ -69,38 +70,34 @@ namespace ztl{
 
 	template<size_t... args1, size_t... args2, size_t args_num, size_t m, typename ...typelist, typename ...rest>
 	struct _tuple_cat <_idx<args1...>, _idx<args2...>, args_num, m, tuple<typelist...>, rest...> {
-		//typedef typename _add_seq_cat_idx<sizeof...(typelist), 0, _idx<args1...>>::result idx1;
 		using idx1 = typename cat_idx<_idx<args1...>, typename make_idx_seq<0, sizeof...(typelist) - 1, 1>::result>::result;
-		//typedef typename _add_num_cat_idx<m, sizeof...(typelist), _idx<args2...>>::result idx2;
 		using idx2 = typename cat_idx<_idx<args2...>, typename make_idx_num<m, sizeof...(typelist)>::result>::result;
 
-		typedef typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::result result;
-		typedef typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::idx_seq idx_seq;
-		typedef typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::idx_num idx_num;
+		using result = typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::result;
+		using idx_seq = typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::idx_seq;
+		using idx_num = typename _tuple_cat<idx1, idx2, args_num, m + 1, rest..., typelist...>::idx_num;
 	};
 
 	template<size_t... args1, size_t... args2, size_t args_num, typename ...rest>
 	struct _tuple_cat <_idx<args1...>, _idx<args2...>, args_num, args_num, rest...> {
-		typedef _idx<args1...> idx_seq;
-		typedef _idx<args2...> idx_num;
-		typedef tuple<rest...> result;
+		using idx_seq = _idx<args1...>;
+		using idx_num =_idx<args2...>;
+		using result = tuple<rest...>;
 	};
-
-
 
 	template<size_t n, typename _This, typename... _Other>
 	struct _tuple_base{
-		typedef typename _tuple_base<n - 1, _Other...>::Base Base;
+		using Base = typename _tuple_base<n - 1, _Other...>::Base;
 	};
 
-	//template<typename... typelist>
-	//struct _tuple_base<0, typelist...>{
-	//	typedef tuple<typelist...> Base;
+	//template<typename _This, typename... _Other>
+	//struct _tuple_base<1, _This, _Other...>{
+	//	using Base = tuple<_Other...>;
 	//};
 
-	template<typename type>
-	struct _tuple_base<1, type>{
-		typedef tuple<> Base;
+	template<typename... _Other>
+	struct _tuple_base<0, _Other...> {
+		using Base = tuple<_Other...>;
 	};
 
 	template<size_t n, typename _tuple_type>
@@ -108,22 +105,21 @@ namespace ztl{
 
 	template<size_t n, typename... typelist>
 	struct tuple_element<n, tuple<typelist...>>{
-		typedef typename tuple_element<n - 1, typename tuple<typelist...>::base>::type type;
+		using type = typename tuple_element<n - 1, typename tuple<typelist...>::base>::type;
 	};
 
 	template<typename... typelist>
 	struct tuple_element<0, tuple<typelist...>>{
-		typedef typename tuple<typelist...>::type type;
+		using type = typename tuple<typelist...>::type;
 	};
 
 	template<size_t n, typename... typelist>
-	inline auto get(tuple<typelist...> _t)->typename tuple_element<n, tuple<typelist...>>::type&{
+	inline auto get(tuple<typelist...>& _t)->typename tuple_element<n, tuple<typelist...>>::type&{
 		//return (typename tuple_element<n, tuple<typelist...>>::type&)_t;	//this can work normally only when all types of typelist are different 
 		//return _t.tuple_base<n, typelist...>::Base::operator tuple_element<n, tuple<typelist...>>::type&();	//error C1001
-		typedef typename tuple_element<n, tuple<typelist...>>::type type;
+		using type = typename tuple_element<n, tuple<typelist...>>::type;
 		return static_cast<typename _tuple_base<n, typelist...>::Base>(_t).operator type&();
 	}
-
 
 	template<typename... typelist>
 	tuple<typelist...> make_tuple(typelist&&... _arg_list){
