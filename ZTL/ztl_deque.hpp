@@ -70,7 +70,7 @@ namespace ztl{
 
 		virtual self& operator+=(difference_type n) {
 			difference_type offset = n + (current - first);
-			if (offset > 0 && offset < static_cast<difference_type>(buffer_size())) {
+			if (offset >= 0 && offset < static_cast<difference_type>(buffer_size())) {
 				current += n;
 			}
 			else {
@@ -263,6 +263,10 @@ namespace ztl{
 		}
 
 		reference operator[](size_type n){
+			return start[n];
+		}
+
+		const_reference operator[](size_type n) const {
 			return start[n];
 		}
 

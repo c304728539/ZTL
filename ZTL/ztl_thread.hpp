@@ -7,11 +7,12 @@
 #endif
 #ifdef WIN32
 #include<Windows.h>
-#include"ztl_vector.hpp"
+
 #endif
-
-#include<thread>
-
+#include"ztl_vector.hpp"
+#include<functional>
+#include<process.h>
+#include"ztl_queue.hpp"
 namespace ztl {
 	//for Window
 	
@@ -136,16 +137,142 @@ namespace ztl {
 
 	};
 	
+	*/
+
+	class threadi {
+		std::function<void()> f;
+		std::thread* pt = nullptr;
+		HANDLE hSemaphore = 0;
+		Mutex overM;
+		bool bover = false;
+	public:
+		threadi(const std::function<void()>& _f): f(_f) {
+			hSemaphore = CreateSemaphore(NULL, 0, 1, NULL);
+		}
+
+		void run() {
+			pt = new std::thread(f);
+			ReleaseSemaphore(hSemaphore, 1, NULL);
+		}
+
+		void over() {
+			synchronized(overM) {
+				if (!bover)
+				{
+					WaitForSingleObject(hSemaphore, INFINITE);
+					pt->join();
+					bover = true;
+				}
+			}
+		}
+
+		~threadi() {
+			//std::cout << "threadi deconstruct"<<std::endl;
+			if (pt)
+			{
+				delete pt;
+				pt = nullptr;
+			}
+			CloseHandle(hSemaphore);
+		}
+	};
+
+	
+	template<int n>
 	class threadmanage {
 	private:
-		unsigned int maxNumParallel;  
-		unsigned int waitNum;
-		unsigned int runningNum;
+		const unsigned int maxNumParallel = 4;
+		queue<threadi*> threadwaiting;
+		queue<threadi*> threadrunning;
+		Mutex mutexwait;
+		bool exit = false;
 	public:
-		threadmanage();
+		threadmanage() {
+			_beginthread(run, 0, this);
+		}
 
+		void AddThread(threadi* thread) {
+			synchronized(mutexwait) {
+				threadwaiting.push(thread);
+			}
+		}
 
+		void Exit() {
+			while (threadrunning.size() != 0 || threadwaiting.size() != 0);
+			synchronized(mutexExit) {
+				exit = true;
+			}
+		}
+	private:
+		static Mutex mutexExit;
+
+		static void run(void* pthis) {
+			threadmanage* ptm = (threadmanage*)pthis;
+			while(1)
+			synchronized(mutexExit){
+				if (!ptm->exit)
+				{
+					if (ptm->threadrunning.size() < ptm->maxNumParallel)
+					{
+						if (ptm->threadwaiting.size() > 0)
+						{
+							auto& mutext = ptm->mutexwait;
+							synchronized(mutext) {
+								ptm->threadwaiting.front()->run();
+								ptm->threadrunning.push(ptm->threadwaiting.front());
+								ptm->threadwaiting.pop();
+							}
+						}
+						else
+						{
+							//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+							if (ptm->threadrunning.size() > 0)
+							{
+								ptm->threadrunning.front()->over();
+								ptm->threadrunning.pop();
+							}
+						}
+					}
+					else // if (ptm->threadrunning.size() > 0)
+					{
+						ptm->threadrunning.front()->over();
+						ptm->threadrunning.pop();
+					}
+					
+				}
+				else
+					return;
+			}
+		}
 	};
+	template<int n>
+	Mutex threadmanage<n>::mutexExit;
+
+
+	/*
+	class thread {
+	public:
+		enum {
+			thread_run_now,
+			thread_run_hold
+		};
+	private:
+		
+	public:
+		thread() {
+
+		}
+
+		template<typename _RT, typename... Args>
+		thread(_RT(*pf)(Args...), Args... args) {
+			auto f = bind(pf, args...);
+		}
+
+		void join() {
+			//_beginthread()
+		}
+	};
+
 	*/
 }
 
