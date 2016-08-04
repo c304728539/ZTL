@@ -24,6 +24,23 @@ namespace ztl{
 		using Result = T2;
 	};
 
+	template<bool r, template<typename> class T1, template<typename> class T2>
+	class IfThenElse2;
+
+	template<template<typename> class T1, template<typename> class T2>
+	class IfThenElse2<true, T1, T2> {
+	public:
+		template<typename T>
+		using Result = T1<T>;
+	};
+
+	template<template<typename> class T1, template<typename> class T2>
+	class IfThenElse2<false, T1, T2> {
+	public:
+		template<typename T>
+		using Result = T2<T>;
+	};
+
 	struct __true_type{
 		static const bool value = true;
 	};

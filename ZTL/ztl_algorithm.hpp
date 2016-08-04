@@ -146,11 +146,11 @@ namespace ztl{
 		}
 	}
 
-	template<typename InputIterator>
+	template<typename InputIterator, bool thread>
 	void _merge(InputIterator& first, InputIterator& mid, InputIterator& last){
 		using value_type = typename iterator_traits<InputIterator>::value_type;
 		//using difference_type = typename iterator_traits<InputIterator>::difference_type;
-		vector<value_type> l(first, mid), r(mid, last);
+		vector<value_type, typename IfThenElse2<thread, Allocator_thread, Allocator>::Result> l(first, mid), r(mid, last);
 		auto lit = l.begin();
 		auto rit = r.begin();
 		for (auto it = first; it != last; ++it/*,++first*/)
@@ -160,7 +160,7 @@ namespace ztl{
 				*it = *rit++;
 	}
 
-	template<typename InputIterator>
+	template<typename InputIterator, bool thread = false>
 	void merge_sort(InputIterator first, InputIterator last){
 		//using value_type = typename iterator_traits<InputIterator>::value_type;
 		using difference_type = typename iterator_traits<InputIterator>::difference_type;
@@ -168,9 +168,9 @@ namespace ztl{
 		if (dis>=2){
 			InputIterator mid = first;
 			advance(mid, dis / 2);
-			merge_sort(first, mid);
-			merge_sort(mid, last);
-			_merge(first, mid, last);
+			merge_sort<InputIterator, thread>(first, mid);
+			merge_sort<InputIterator, thread>(mid, last);
+			_merge<InputIterator,thread>(first, mid, last);
 		}
 	}
 

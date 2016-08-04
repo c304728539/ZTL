@@ -1,20 +1,20 @@
 
 #include<iostream>
-#include"ztl_thread.hpp"
-#include"ztl_parallel.hpp"
+#include"..\..\ZTl\ztl_thread.hpp"
+#include"..\..\ZTl\ztl_parallel.hpp"
 #include<ctime>
 
 using std::cout;
 using std::endl;
 using namespace ztl;
 
-void A(int a, int b){
-	cout << a <<b;
+void A(int a, int b) {
+	cout << a << b;
 }
 
 int main(int argc, char *argv[], char *env[])
 {
-	vector<int> vec0,vec1;
+	vector<int> vec0, vec1;
 	for (int i = 0; i < 200000; ++i)
 	{
 		int r = rand();
@@ -28,7 +28,7 @@ int main(int argc, char *argv[], char *env[])
 	clock_t end = clock();
 	std::cout << static_cast<double>(end - start) / CLOCKS_PER_SEC << std::endl;
 	/*for(auto it : vec0)
-		std::cout << it << ' ';
+	std::cout << it << ' ';
 	std::cout << std::endl;*/
 
 	start = clock();
@@ -36,9 +36,9 @@ int main(int argc, char *argv[], char *env[])
 	end = clock();
 	std::cout << static_cast<double>(end - start) / CLOCKS_PER_SEC << std::endl;
 	/*for (auto it : vec1)
-		std::cout << it << ' ';
+	std::cout << it << ' ';
 	std::cout << std::endl;*/
-	
+
 
 	return 0;
 }
