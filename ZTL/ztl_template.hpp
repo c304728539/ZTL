@@ -124,6 +124,119 @@ namespace ztl{
 	};
 
 
+
+	template<typename ...args>
+	struct _tls;
+
+	template<int num, typename tls>
+	struct _make_tls_void_aux;
+
+	template<int num>
+	struct make_tls_void {
+		using result = typename _make_tls_void_aux<num, _tls<>>::result;
+	};
+
+	template<int num, typename... args>
+	struct _make_tls_void_aux<num, _tls<args...>> {
+		using result = typename _make_tls_void_aux<num - 1, _tls<args..., void>>::result;
+	};
+
+	template<typename... args>
+	struct _make_tls_void_aux<0, _tls<args...>> {
+		using result = _tls<args...>;
+	};
+
+	template<typename tls>
+	struct tls_size;
+
+	template<typename... args>
+	struct tls_size<_tls<args...>> {
+		static const size_t size = sizeof...(args);
+	};
+
+	template<int num, typename tls, typename r>
+	struct _tls_extract_front_aux;
+
+	template<int num, typename tls>
+	struct tls_extract_front {
+		using result = typename IfThenElse < num != 0,
+			typename _tls_extract_front_aux<num, tls, _tls<>>::result,
+			_tls < >> ::Result;
+	};
+
+	template<int num, typename arg, typename... args, typename... r>
+	struct _tls_extract_front_aux<num,_tls<arg,args...>,_tls<r...>> {
+		using list = typename IfThenElse < num != 0, _tls<args...>, void>::Result;
+		using result = typename IfThenElse<num!=0,
+			typename _tls_extract_front_aux<num - 1, list, _tls<r..., arg>>::result,
+			_tls<r...>>::Result;
+	};
+
+	template<int num, typename r>
+	struct _tls_extract_front_aux<num, _tls<>, r> {
+		using result = r;
+	};
+
+	template<typename r>
+	struct _tls_extract_front_aux<-1, void, r> {
+		using result = r;
+	};
+
+	template<int num, typename tls>
+	struct _tls_extract_back_aux;
+
+	template<int num, typename arg, typename... args>
+	struct _tls_extract_back_aux<num, _tls<arg, args...>> {
+		using list = typename IfThenElse < num != 0, _tls<args...>, void>::Result;
+		using result = typename IfThenElse < (((int)sizeof...(args) -  num) != 0),
+			typename _tls_extract_back_aux<num - 1, list>::result,
+			_tls < args... >> ::Result;
+	};
+
+	template<int num, typename tls>
+	struct tls_extract_back {
+		using result = typename IfThenElse <num != 0, typename _tls_extract_back_aux<num, tls>::result, _tls<>>::Result;
+	};
+
+	template<int num>
+	struct _tls_extract_back_aux<num, _tls<>> {
+		using result = _tls<>;
+	};
+
+	template<>
+	struct _tls_extract_back_aux<-1, void> {
+		using result = void;
+	};
+
+	template<typename tls1, typename tls2>
+	struct tls_cat;
+
+	template<typename... args1, typename... args2>
+	struct tls_cat<_tls<args1...>, _tls<args2...>> {
+		using result = _tls<args1..., args2...>;
+	};
+
+	template<typename tls1, typename arg, typename tls2>
+	struct tls_cat3;
+
+	template<typename... args1, typename arg, typename... args2>
+	struct tls_cat3<_tls<args1...>, arg, _tls<args2...>> {
+		using result = _tls<args1..., arg, args2...>;
+	};
+
+	template<typename tls, size_t num, typename T>
+	struct replace_typelist {
+		static const int dis = IfThenElseN<(tls_size<tls>::size > num), 0, num - tls_size<tls>::size>::Result;
+		using result = typename IfThenElse<(tls_size<tls>::size > num),
+			typename tls_cat3 < typename tls_extract_front < num, tls>::result,
+			T, typename tls_extract_back < tls_size<tls>::size - num - 1, tls>::result>::result,
+			typename tls_cat3 < 
+			typename tls_extract_front< num , typename tls_cat<tls, typename make_tls_void<dis>::result>::result>::result,
+			T, typename tls_extract_back < tls_size<tls>::size - num - 1, typename tls_cat<tls, typename make_tls_void<dis>::result>::result>::result>::result
+		>::Result;
+		static_assert(num!=2, "!!!!");
+	};
+
 }
 
 #endif

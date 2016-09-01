@@ -41,6 +41,21 @@ namespace ztl{
 		using Result = T2<T>;
 	};
 
+	template<bool r, int n1, int n2>
+	class IfThenElseN;
+
+	template<int n1, int n2>
+	class IfThenElseN<true, n1, n2> {
+	public:
+		static const int Result = n1;
+	};
+
+	template<int n1, int n2>
+	class IfThenElseN<false, n1, n2> {
+	public:
+		static const int Result = n2;
+	};
+
 	struct __true_type{
 		static const bool value = true;
 	};
